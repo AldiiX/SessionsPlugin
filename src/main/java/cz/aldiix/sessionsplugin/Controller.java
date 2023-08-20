@@ -1,11 +1,9 @@
 package cz.aldiix.sessionsplugin;
 
-import com.google.errorprone.annotations.Var;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static cz.aldiix.sessionsplugin.Config.config;
 
