@@ -9,8 +9,10 @@ sessions:
   1:
     name: test2
     players:
-      - name: ITM
+      0:
+        name: ITM
         role: Owner
-      - name: FoFo23
+      1:
+        name: FoFo23
         role: Moderator
 messages:

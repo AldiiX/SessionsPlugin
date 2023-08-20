@@ -1,4 +1,5 @@
 cz\aldiix\sessionsplugin\Controller.class
+cz\aldiix\sessionsplugin\commands\SessionCommand.class
 cz\aldiix\sessionsplugin\Config.class
 cz\aldiix\sessionsplugin\Controller$Member.class
 cz\aldiix\sessionsplugin\Main.class

@@ -39,8 +39,6 @@ public class Controller {
     public void refresh() {
         sessions.clear();
 
-
-
         ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
         if (sessionsSection == null) return;
 
@@ -52,16 +50,14 @@ public class Controller {
             session.id = Integer.parseInt(key);
             session.name = sessionData.getString("name");
 
-            List<Map<?, ?>> playersList = sessionData.getMapList("players");
-            if(playersList.isEmpty()) continue;
+            ConfigurationSection playersList = sessionData.getConfigurationSection("players");
+            if(playersList == null) continue;
 
-            for (Map<?, ?> playerDataMap : playersList) {
-                if (playerDataMap instanceof ConfigurationSection) {
-                    ConfigurationSection playerData = (ConfigurationSection) playerDataMap;
-                    String playerName = playerData.getString("name");
-                    String playerRole = playerData.getString("role");
-                    session.members.add(new Member(playerName, playerRole));
-                }
+            for (String k2 : playersList.getKeys(false)) {
+                ConfigurationSection playerData = (ConfigurationSection) playersList.get(k2);
+                String playerName = playerData.getString("name");
+                String playerRole = playerData.getString("role");
+                session.members.add(new Member(playerName, playerRole));
             }
 
             sessions.add(session);
