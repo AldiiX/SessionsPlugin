@@ -1,4 +1,4 @@
 name: Sessions
-version: '${project.version}'
+version: '1.0'
 main: cz.aldiix.sessionsplugin.Main
 api-version: '1.20'
