@@ -24,7 +24,11 @@ public class Config {
     public static void init() {
         config = YamlConfiguration.loadConfiguration(file);
 
-        config.set("version", 1);
+        if(config.get("prefix") == null) config.set("prefix", "§a§lSESSIONS§r§8 >> §r");
+        if(config.get("messages.sessionSuccessfullyCreated") == null) config.set("messages.sessionSuccessfullyCreated", "Session successfully created.");
+
+        Variables.pluginPrefix = config.getString("prefix");
+        Variables.Messages.sessionSuccessfullyCreated = config.getString("messages.sessionSuccessfullyCreated");
         save();
     }
 }

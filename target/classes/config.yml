@@ -2,9 +2,11 @@ sessions:
   0:
     name: test
     players:
-      - name: AldiiX
+      0:
+        name: AldiiX
         role: Owner
-      - name: Mannius
+      1:
+        name: Mannius
         role: Member
   1:
     name: test2
