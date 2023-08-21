@@ -1,12 +1,56 @@
 package cz.aldiix.sessionsplugin.commands;
 
+import cz.aldiix.sessionsplugin.Config;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+
+import static cz.aldiix.sessionsplugin.Config.config;
+import static cz.aldiix.sessionsplugin.Main.plugin;
 
 public class SessionCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+
+        if(sender instanceof ConsoleCommandSender) return false;
+
+        Player player = (Player) sender;
+        String playerName = player.getDisplayName();
+
+        switch(args[0]) {
+            case "create": {
+                String sessionName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+
+
+                // sessions query
+                ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
+                int nextSessionIndex = sessionsSection.getKeys(false).size();
+
+                // add new session
+                ConfigurationSection newSession = sessionsSection.createSection(String.valueOf(nextSessionIndex));
+                newSession.set("sessionName", sessionName);
+                newSession.set("owner", playerName);
+
+                // add players section
+                ConfigurationSection playersSection = newSession.createSection("players");
+
+                ConfigurationSection newPlayer1 = playersSection.createSection("0");
+                newPlayer1.set("sessionName", playerName);
+                newPlayer1.set("role", "Owner");
+
+                Config.save();
+            } break;
+
+            case "invite": {
+                
+            }
+        }
+
         return true;
     }
 }
