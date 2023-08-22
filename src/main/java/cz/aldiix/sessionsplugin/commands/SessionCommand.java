@@ -12,15 +12,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static cz.aldiix.sessionsplugin.Config.config;
+import static cz.aldiix.sessionsplugin.Config.*;
+import static cz.aldiix.sessionsplugin.Message.Type.*;
 
 public class SessionCommand implements CommandExecutor, TabCompleter {
 
     private String[] args;
+    private Player player;
 
 
     // Util methods
-    private boolean checkIfPlayerHasSession(Player player, ConfigurationSection sessionsSection) {
+    private boolean checkIfPlayerHasSession(ConfigurationSection sessionsSection) {
+        return getPlayersSessionID() >= 0;
+    }
+
+    private int getPlayersSessionID() {
+        ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
+
         for (String key : sessionsSection.getKeys(false)) {
             ConfigurationSection sessionData = sessionsSection.getConfigurationSection(key);
             if (sessionData == null) continue;
@@ -30,31 +38,40 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
 
             for (String key2 : playersList.getKeys(false)) {
                 ConfigurationSection playerData = (ConfigurationSection) playersList.get(key2);
-                if(Objects.equals(playerData.getString("name"), player.getDisplayName())) return true;
+                if(Objects.equals(playerData.getString("name"), player.getDisplayName())) return Integer.parseInt(key);
             }
         }
 
-        return false;
+        return -1;
     }
 
-    private int getPlayersSessionID(Player player) {
-        return -1;
+    private int getNextSessionIndex() {
+        ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
+        int size = sessionsSection.getKeys(false).size();
+
+        for (int i = 0; i < size; i++) {
+            String n = String.valueOf(i);
+
+            if(sessionsSection.getString(n) == null) return Integer.parseInt(n);
+        }
+
+        return size;
     }
 
 
 
     // Main methods
-    private void createSession(Player player) {
+    private void createSession() {
         String sessionName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         String playerName = player.getDisplayName();
 
         // sessions query
         ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
-        int nextSessionIndex = sessionsSection != null ? sessionsSection.getKeys(false).size() : 0;
+        int nextSessionIndex = getNextSessionIndex();
 
         // check if player is already in a session
-        if(nextSessionIndex != 0 && checkIfPlayerHasSession(player, sessionsSection)) {
-            Message.send(Message.Type.ERROR, player, Variables.Messages.playerIsAlreadyConnectedToSessionError);
+        if(nextSessionIndex != 0 && checkIfPlayerHasSession(sessionsSection)) {
+            Message.send(ERROR, player, Variables.Messages.playerIsAlreadyConnectedToSessionError);
             return;
         }
 
@@ -71,14 +88,31 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
         newPlayer1.set("role", "Owner");
 
         Config.save();
-        Message.send(Message.Type.SUCCESS, player, Variables.Messages.sessionSuccessfullyCreated);
+        Message.send(SUCCESS, player, Variables.Messages.sessionSuccessfullyCreated);
     }
 
-    private void deleteSession(Player player) {
-        int id = getPlayersSessionID(player);
+    private void deleteSession() {
+        int id = getPlayersSessionID();
 
         if(id < 0) return;
+
+        ConfigurationSection session = config.getConfigurationSection("sessions." + id);
+        if(!Objects.equals(session.getString("owner"), player.getDisplayName())) {
+            Message.send(ERROR, player, Variables.Messages.playerIsNotOwnerSessionDeleteError);
+            return;
+        }
+
+        config.set("sessions." + id, null);
+        Message.send(SUCCESS, player, Variables.Messages.sessionSuccessfullyDeleted);
+        Config.save();
     }
+
+    private void leaveSession() {
+        
+    }
+
+
+
 
 
     // CmdExecutor methods
@@ -88,17 +122,19 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
         if(sender instanceof ConsoleCommandSender) return false;
 
         Player player = (Player) sender;
+        this.player = player;
         this.args = args;
 
 
         if(args.length > 0) switch (args[0]) {
-            case "create" -> createSession(player);
+            case "create" -> createSession();
             case "invite" -> {
 
             }
-            case "delete" -> deleteSession(player);
+            case "delete" -> deleteSession();
+            case "leave" -> leaveSession();
             /*default -> {
-                Message.send(Message.Type.ERROR, player, "");
+                Message.send(ERROR, player, "");
             }*/
         }
 

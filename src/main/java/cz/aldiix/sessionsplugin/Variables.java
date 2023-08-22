@@ -6,5 +6,7 @@ public final class Variables {
     public static class Messages {
         public static String sessionSuccessfullyCreated;
         public static String playerIsAlreadyConnectedToSessionError;
+        public static String playerIsNotOwnerSessionDeleteError;
+        public static String sessionSuccessfullyDeleted;
     }
 }
