@@ -8,5 +8,8 @@ public final class Variables {
         public static String playerIsAlreadyConnectedToSessionError;
         public static String playerIsNotOwnerSessionDeleteError;
         public static String sessionSuccessfullyDeleted;
+        public static String successfullyLeftSession;
+        public static String playerIsNotInSessionLeaveError;
+        public static String sessionOwnerLeftYouAreTheNewOwner;
     }
 }

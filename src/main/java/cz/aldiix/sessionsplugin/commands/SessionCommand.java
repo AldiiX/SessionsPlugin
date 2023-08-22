@@ -7,12 +7,10 @@ import org.bukkit.command.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static cz.aldiix.sessionsplugin.Config.*;
+import static cz.aldiix.sessionsplugin.Main.plugin;
 import static cz.aldiix.sessionsplugin.Message.Type.*;
 
 public class SessionCommand implements CommandExecutor, TabCompleter {
@@ -65,6 +63,8 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
         String sessionName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         String playerName = player.getDisplayName();
 
+        if(sessionName.isEmpty()) sessionName = playerName + "'s session";
+
         // sessions query
         ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
         int nextSessionIndex = getNextSessionIndex();
@@ -108,7 +108,55 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
     }
 
     private void leaveSession() {
-        
+        int id = getPlayersSessionID();
+        ConfigurationSection session = config.getConfigurationSection("sessions." + id);
+
+        if(session == null) {
+            Message.send(ERROR, player, Variables.Messages.playerIsNotInSessionLeaveError);
+            return;
+        }
+
+        ConfigurationSection players = session.getConfigurationSection("players");
+        int numberOfPlayersInSession = players.getKeys(false).size();
+
+
+
+        // player deletion from the session
+        for (String key : players.getKeys(false)) {
+            if(Objects.equals(players.getString(key + ".name"), player.getDisplayName())) {
+                players.set(key, null);
+                break;
+            }
+        }
+
+        numberOfPlayersInSession--;
+
+
+
+        // delete session if no players in the session or change owner if another player is in the session
+        if(numberOfPlayersInSession < 1) {
+            config.set("sessions." + id, null);
+        } else if(Objects.equals(session.getString("owner"), player.getDisplayName())) {
+            List<Integer> playersInSessionId = new ArrayList<>();
+
+            for (String key : players.getKeys(false)) {
+                playersInSessionId.add(Integer.parseInt(key));
+            }
+
+            int randomIndex = new Random().nextInt(playersInSessionId.size());
+            int selectedPlayerId = playersInSessionId.get(randomIndex);
+
+            String newOwnerName = players.getString(selectedPlayerId + ".name");
+            Player newOwner = plugin.getServer().getPlayer(newOwnerName);
+
+            Message.send(NORMAL, newOwner, Variables.Messages.sessionOwnerLeftYouAreTheNewOwner.replaceAll("%owner%", player.getDisplayName()));
+            session.set("owner", newOwnerName);
+        }
+
+
+
+        Config.save();
+        Message.send(SUCCESS, player, Variables.Messages.successfullyLeftSession);
     }
 
 
@@ -149,6 +197,7 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
             completions.add("create");
             completions.add("invite");
             completions.add("delete");
+            completions.add("leave");
         } else if(args.length == 2 && Objects.equals(args[0], "create")) {
             completions.add("name");
         }
