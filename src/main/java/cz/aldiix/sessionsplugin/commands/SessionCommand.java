@@ -20,7 +20,7 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
 
 
     // Util methods
-    private boolean checkIfPlayerHasSession(ConfigurationSection sessionsSection) {
+    private boolean checkIfPlayerHasSession() {
         return getPlayersSessionID() >= 0;
     }
 
@@ -70,7 +70,7 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
         int nextSessionIndex = getNextSessionIndex();
 
         // check if player is already in a session
-        if(nextSessionIndex != 0 && checkIfPlayerHasSession(sessionsSection)) {
+        if(nextSessionIndex != 0 && checkIfPlayerHasSession()) {
             Message.send(ERROR, player, Variables.Messages.playerIsAlreadyConnectedToSessionError);
             return;
         }

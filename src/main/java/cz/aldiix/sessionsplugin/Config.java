@@ -5,6 +5,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static cz.aldiix.sessionsplugin.Main.plugin;
 
@@ -25,7 +27,7 @@ public class Config {
         config = YamlConfiguration.loadConfiguration(file);
 
         if(config.get("prefix") == null) config.set("prefix", "§b§lSESSIONS§r§8 » §r");
-        if(config.get("sessions") == null) config.set("sessions", "{}");
+        if(config.get("sessions") == null) config.set("sessions", new LinkedHashMap<>());
         if(config.get("messages.sessionSuccessfullyCreated") == null) config.set("messages.sessionSuccessfullyCreated", "The session has been successfully created.");
         if(config.get("messages.playerIsAlreadyConnectedToSessionError") == null) config.set("messages.playerIsAlreadyConnectedToSessionError", "You can't create a session because you're currently in one.");
         if(config.get("messages.playerIsNotOwnerSessionDeleteError") == null) config.set("messages.playerIsNotOwnerSessionDeleteError", "You can't delete this session, because you're not the owner of the session.");
