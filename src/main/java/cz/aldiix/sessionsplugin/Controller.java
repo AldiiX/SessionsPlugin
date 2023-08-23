@@ -37,7 +37,7 @@ public class Controller {
 
 
 
-    private int getPlayersSessionID(Player player) {
+    public static int getPlayersSessionID(Player player) {
         ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
 
         for (String key : sessionsSection.getKeys(false)) {
@@ -92,7 +92,6 @@ public class Controller {
             // show all players to everyone
             for(Player p : plugin.getServer().getOnlinePlayers()) {
                 player.showPlayer(plugin, p);
-                p.showPlayer(plugin, player);
             }
 
             //if(plugin.getServer().getOnlinePlayers().size() <= 1) break;
@@ -104,7 +103,6 @@ public class Controller {
 
             for(Player p : plugin.getServer().getOnlinePlayers()) {
                 player.hidePlayer(plugin, p);
-                p.hidePlayer(plugin, player);
             }
 
 
@@ -114,7 +112,6 @@ public class Controller {
                 for(Player p : plugin.getServer().getOnlinePlayers()) {
                     if(getPlayersSessionID(p) == -1) {
                         player.showPlayer(plugin, p);
-                        p.showPlayer(plugin, player);
                     }
                 }
 
