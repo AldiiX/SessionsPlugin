@@ -1,6 +1,7 @@
 package cz.aldiix.sessionsplugin.commands;
 
 import cz.aldiix.sessionsplugin.Config;
+import cz.aldiix.sessionsplugin.Controller;
 import cz.aldiix.sessionsplugin.Message;
 import cz.aldiix.sessionsplugin.Variables;
 import org.bukkit.command.*;
@@ -56,7 +57,14 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
     }
 
     private int getNextSectionIndex(ConfigurationSection section) {
-        int size = section.getKeys(false).size();
+        int size = 0;
+
+        try {
+            size = section.getKeys(false).size();
+        } catch (Exception e) {
+            return 0;
+        }
+
 
         for (int i = 0; i < size; i++) {
             String n = String.valueOf(i);
@@ -299,8 +307,8 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
         if(args.length > 0) switch (args[0]) {
             case "create" -> createSession();
             case "invite" -> invitePlayer();
-            case "inviteaccept" -> inviteAccept();
-            case "invitedeny" -> inviteDeny();
+            case "accept" -> inviteAccept();
+            case "deny" -> inviteDeny();
             case "delete" -> deleteSession();
             case "leave" -> leaveSession();
             /*default -> {
@@ -308,6 +316,8 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
             }*/
         }
 
+        Config.save();
+        Controller.init();
         return true;
     }
 
@@ -329,8 +339,8 @@ public class SessionCommand implements CommandExecutor, TabCompleter {
             completions.add("delete");
             completions.add("leave");
             if(senderIsInvited) {
-                completions.add("inviteaccept");
-                completions.add("invitedeny");
+                completions.add("accept");
+                completions.add("deny");
             }
         } else if(args.length == 2 && Objects.equals(args[0], "create")) {
             completions.add("[<name>]");

@@ -1,11 +1,14 @@
 package cz.aldiix.sessionsplugin;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static cz.aldiix.sessionsplugin.Config.config;
+import static cz.aldiix.sessionsplugin.Main.plugin;
 
 public class Controller {
 
@@ -34,8 +37,29 @@ public class Controller {
 
 
 
+    private int getPlayersSessionID(Player player) {
+        ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
+
+        for (String key : sessionsSection.getKeys(false)) {
+            ConfigurationSection sessionData = sessionsSection.getConfigurationSection(key);
+            if (sessionData == null) continue;
+
+            ConfigurationSection playersList = sessionData.getConfigurationSection("players");
+            if(playersList == null) continue;
+
+            for (String key2 : playersList.getKeys(false)) {
+                ConfigurationSection playerData = (ConfigurationSection) playersList.get(key2);
+                if(Objects.equals(playerData.getString("name"), player.getDisplayName())) return Integer.parseInt(key);
+            }
+        }
+
+        return -1;
+    }
+
+
+
     public void refresh() {
-        sessions.clear();
+        /*sessions.clear();
 
         ConfigurationSection sessionsSection = config.getConfigurationSection("sessions");
         if (sessionsSection == null) return;
@@ -59,6 +83,55 @@ public class Controller {
             }
 
             sessions.add(session);
+        }*/
+
+
+
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+
+            // show all players to everyone
+            for(Player p : plugin.getServer().getOnlinePlayers()) {
+                player.showPlayer(plugin, p);
+                p.showPlayer(plugin, player);
+            }
+
+            //if(plugin.getServer().getOnlinePlayers().size() <= 1) break;
+
+
+
+            // hide all players
+            int playerSessionId = getPlayersSessionID(player);
+
+            for(Player p : plugin.getServer().getOnlinePlayers()) {
+                player.hidePlayer(plugin, p);
+                p.hidePlayer(plugin, player);
+            }
+
+
+
+            // if player is not in any session, then show every player who is not in any session
+            if(playerSessionId == -1) {
+                for(Player p : plugin.getServer().getOnlinePlayers()) {
+                    if(getPlayersSessionID(p) == -1) {
+                        player.showPlayer(plugin, p);
+                        p.showPlayer(plugin, player);
+                    }
+                }
+
+                continue;
+            }
+
+
+            // show session players
+            ConfigurationSection players = config.getConfigurationSection("sessions." + playerSessionId + ".players");
+            if(players == null) continue;
+
+            for (String key : players.getKeys(false)) {
+                Player p = plugin.getServer().getPlayer(players.getString(key + ".name"));
+                if(p == null) continue;
+
+                player.showPlayer(plugin, p);
+            }
         }
     }
 
