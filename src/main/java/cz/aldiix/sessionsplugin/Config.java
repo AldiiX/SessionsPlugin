@@ -37,7 +37,7 @@ public class Config {
         if(config.get("messages.sessionOwnerLeftYouAreTheNewOwner") == null) config.set("messages.sessionOwnerLeftYouAreTheNewOwner", "The owner of this session (%owner%) has left, you are the new owner.");
         if(config.get("messages.noPlayerSpecifiedInviteError") == null) config.set("messages.noPlayerSpecifiedInviteError", "You didn't specify user.\nUsage: §6/session invite <username>§c.");
         if(config.get("messages.specifiedPlayerDoesntExistInviteError") == null) config.set("messages.specifiedPlayerDoesntExistInviteError", "Specified user doesn't exist or is not connected to the server.");
-        if(config.get("messages.someoneHasInvitedYouToSession") == null) config.set("messages.someoneHasInvitedYouToSession", "%player% has invited you to a session.\nType §6/session inviteaccept§e to accept the invite\nor §6/session invitedeny§e to decline it.");
+        if(config.get("messages.someoneHasInvitedYouToSession") == null) config.set("messages.someoneHasInvitedYouToSession", "%player% has invited you to a session.\nType §6/session accept§e to accept the invite\nor §6/session deny§e to decline it.");
         if(config.get("messages.youreNotPermittedInviteError") == null) config.set("messages.youreNotPermittedInviteError", "You're not permitted to invite players to your session. Only owner can invite players.");
         if(config.get("messages.sessionInviteDeclined") == null) config.set("messages.sessionInviteDeclined", "You've successfully declined an invite.");
         if(config.get("messages.sessionInviteAccepted") == null) config.set("messages.sessionInviteAccepted", "You've successfully accepted an invite.");
