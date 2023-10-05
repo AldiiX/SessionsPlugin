@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static cz.aldiix.sessionsplugin.Config.config;
-import static cz.aldiix.sessionsplugin.Main.plugin;
+import static cz.aldiix.sessionsplugin.SessionsPlugin.plugin;
 
 public class Controller {
 

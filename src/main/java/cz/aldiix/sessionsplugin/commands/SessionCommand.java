@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 import static cz.aldiix.sessionsplugin.Config.*;
-import static cz.aldiix.sessionsplugin.Main.plugin;
+import static cz.aldiix.sessionsplugin.SessionsPlugin.plugin;
 import static cz.aldiix.sessionsplugin.Message.Type.*;
 
 public class SessionCommand implements CommandExecutor, TabCompleter {

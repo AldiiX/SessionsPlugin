@@ -5,10 +5,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import static cz.aldiix.sessionsplugin.Main.plugin;
+import static cz.aldiix.sessionsplugin.SessionsPlugin.plugin;
 
 public class Config {
 
